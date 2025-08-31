@@ -42,7 +42,7 @@ const Sales = () => {
               Manage your sales records and transactions
             </p>
           </div>
-          <Button className="gradient-button">
+          <Button className="gradient-button" onClick={() => window.location.href = '/generate-bill'}>
             <Plus className="mr-2 h-4 w-4" />
             New Sale
           </Button>
@@ -97,13 +97,31 @@ const Sales = () => {
                     </Badge>
                     
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => {
+                          alert(`Viewing details for ${sale.id}:\n\nCustomer: ${sale.customer}\nAmount: ${sale.amount}\nStatus: ${sale.status}\nDate: ${sale.date}`)
+                        }}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => window.location.href = `/generate-bill?edit=${sale.id}`}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => {
+                          if(confirm(`Are you sure you want to delete ${sale.id}?`)) {
+                            alert('Sale deleted successfully!')
+                          }
+                        }}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>

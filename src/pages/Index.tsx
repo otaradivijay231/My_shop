@@ -63,7 +63,7 @@ const Index = () => {
               Track your business performance and analytics
             </p>
           </div>
-          <Button className="gradient-button">
+          <Button className="gradient-button" onClick={() => window.location.href = '/reports'}>
             <TrendingUp className="mr-2 h-4 w-4" />
             View Full Report
           </Button>
@@ -151,7 +151,7 @@ const Index = () => {
 
         {/* Quick Actions */}
         <div className="grid gap-4 md:grid-cols-3">
-          <Card className="glass-card hover-lift cursor-pointer">
+          <Card className="glass-card hover-lift cursor-pointer" onClick={() => window.location.href = '/sales'}>
             <CardContent className="p-6 text-center">
               <ShoppingCart className="h-8 w-8 mx-auto mb-4 text-primary" />
               <h3 className="font-semibold mb-2">New Sale</h3>
@@ -159,7 +159,7 @@ const Index = () => {
             </CardContent>
           </Card>
           
-          <Card className="glass-card hover-lift cursor-pointer">
+          <Card className="glass-card hover-lift cursor-pointer" onClick={() => window.location.href = '/customers'}>
             <CardContent className="p-6 text-center">
               <Users className="h-8 w-8 mx-auto mb-4 text-primary" />
               <h3 className="font-semibold mb-2">Add Customer</h3>
@@ -167,7 +167,7 @@ const Index = () => {
             </CardContent>
           </Card>
           
-          <Card className="glass-card hover-lift cursor-pointer">
+          <Card className="glass-card hover-lift cursor-pointer" onClick={() => window.location.href = '/reports'}>
             <CardContent className="p-6 text-center">
               <TrendingUp className="h-8 w-8 mx-auto mb-4 text-primary" />
               <h3 className="font-semibold mb-2">View Reports</h3>

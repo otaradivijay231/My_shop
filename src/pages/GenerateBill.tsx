@@ -6,12 +6,15 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
+import { Checkbox } from "@/components/ui/checkbox"
 import { 
   Plus, 
   Trash2,
   Calculator,
   Save,
-  Send
+  Send,
+  Printer,
+  Receipt
 } from "lucide-react"
 import { useState } from "react"
 
@@ -19,6 +22,7 @@ const GenerateBill = () => {
   const [billItems, setBillItems] = useState([
     { id: 1, description: "", quantity: 1, rate: 0, amount: 0 }
   ])
+  const [includeGST, setIncludeGST] = useState(true)
 
   const addItem = () => {
     setBillItems([...billItems, { 
@@ -48,8 +52,70 @@ const GenerateBill = () => {
   }
 
   const subtotal = billItems.reduce((sum, item) => sum + item.amount, 0)
-  const tax = subtotal * 0.1 // 10% tax
-  const total = subtotal + tax
+  const gstRate = 0.18 // 18% GST
+  const gst = includeGST ? subtotal * gstRate : 0
+  const total = subtotal + gst
+
+  const handlePrint = () => {
+    const printWindow = window.open('', '_blank')
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Invoice</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              .header { text-align: center; margin-bottom: 30px; }
+              .invoice-details { margin-bottom: 20px; }
+              .items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+              .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              .items-table th { background-color: #f2f2f2; }
+              .total-section { text-align: right; margin-top: 20px; }
+              .total { font-weight: bold; font-size: 18px; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h1>INVOICE</h1>
+              <p>BusinessHub</p>
+            </div>
+            <div class="invoice-details">
+              <p><strong>Invoice Number:</strong> INV-${Date.now()}</p>
+              <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+              <p><strong>GST Type:</strong> ${includeGST ? 'With GST (18%)' : 'Without GST'}</p>
+            </div>
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Quantity</th>
+                  <th>Rate</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${billItems.map(item => `
+                  <tr>
+                    <td>${item.description || 'N/A'}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${item.rate.toFixed(2)}</td>
+                    <td>$${item.amount.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+            <div class="total-section">
+              <p>Subtotal: $${subtotal.toFixed(2)}</p>
+              ${includeGST ? `<p>GST (18%): $${gst.toFixed(2)}</p>` : ''}
+              <p class="total">Total: $${total.toFixed(2)}</p>
+            </div>
+          </body>
+        </html>
+      `)
+      printWindow.document.close()
+      printWindow.print()
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -66,6 +132,13 @@ const GenerateBill = () => {
             <Button variant="outline">
               <Save className="mr-2 h-4 w-4" />
               Save Draft
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={handlePrint}
+            >
+              <Printer className="mr-2 h-4 w-4" />
+              Print Invoice
             </Button>
             <Button className="gradient-button">
               <Send className="mr-2 h-4 w-4" />
@@ -178,6 +251,18 @@ const GenerateBill = () => {
                 
                 <Separator className="my-6" />
                 
+                {/* GST Option */}
+                <div className="flex items-center space-x-2 mb-4">
+                  <Checkbox 
+                    id="includeGST" 
+                    checked={includeGST}
+                    onCheckedChange={(checked) => setIncludeGST(checked as boolean)}
+                  />
+                  <Label htmlFor="includeGST" className="text-sm font-medium">
+                    Include GST (18%)
+                  </Label>
+                </div>
+                
                 <div className="space-y-2">
                   <Label htmlFor="notes">Notes</Label>
                   <Textarea id="notes" placeholder="Additional notes or terms..." rows={3} />
@@ -200,14 +285,19 @@ const GenerateBill = () => {
                   <span>Subtotal:</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Tax (10%):</span>
-                  <span>${tax.toFixed(2)}</span>
-                </div>
+                {includeGST && (
+                  <div className="flex justify-between">
+                    <span>GST (18%):</span>
+                    <span>${gst.toFixed(2)}</span>
+                  </div>
+                )}
                 <Separator />
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total:</span>
                   <span className="text-primary">${total.toFixed(2)}</span>
+                </div>
+                <div className="text-xs text-muted-foreground mt-2">
+                  {includeGST ? 'Invoice includes 18% GST' : 'Invoice without GST'}
                 </div>
               </CardContent>
             </Card>

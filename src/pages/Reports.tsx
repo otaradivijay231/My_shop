@@ -102,7 +102,9 @@ const Reports = () => {
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
-            <Button className="bg-primary hover:bg-primary/90">
+            <Button className="gradient-button" onClick={() => {
+              alert('Generating comprehensive report...')
+            }}>
               <FileText className="mr-2 h-4 w-4" />
               Generate Report
             </Button>
@@ -175,10 +177,39 @@ const Reports = () => {
                   </div>
                   
                   <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="icon">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => {
+                        alert(`Report Details:\n\nName: ${report.name}\nType: ${report.type}\nGenerated: ${report.generatedDate}\nSize: ${report.size}\nFormat: ${report.format}`)
+                      }}
+                    >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => {
+                        const printWindow = window.open('', '_blank')
+                        if (printWindow) {
+                          printWindow.document.write(`
+                            <html>
+                              <head><title>${report.name}</title></head>
+                              <body style="font-family: Arial, sans-serif; margin: 20px;">
+                                <h1>${report.name}</h1>
+                                <p><strong>Type:</strong> ${report.type}</p>
+                                <p><strong>Generated:</strong> ${report.generatedDate}</p>
+                                <p><strong>Size:</strong> ${report.size}</p>
+                                <p><strong>Format:</strong> ${report.format}</p>
+                                <p>This is a sample ${report.type.toLowerCase()} report document.</p>
+                              </body>
+                            </html>
+                          `)
+                          printWindow.document.close()
+                          printWindow.print()
+                        }
+                      }}
+                    >
                       <Download className="h-4 w-4" />
                     </Button>
                   </div>

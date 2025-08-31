@@ -100,7 +100,9 @@ const Customers = () => {
               Manage your customer relationships and data
             </p>
           </div>
-          <Button className="bg-primary hover:bg-primary/90">
+          <Button className="gradient-button" onClick={() => {
+            alert('Add Customer form would open here')
+          }}>
             <Plus className="mr-2 h-4 w-4" />
             Add Customer
           </Button>
@@ -225,13 +227,49 @@ const Customers = () => {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => {
+                          alert(`Customer Details:\n\nName: ${customer.name}\nEmail: ${customer.email}\nPhone: ${customer.phone}\nTotal Orders: ${customer.orders}\nTotal Spent: ${customer.totalSpent}`)
+                        }}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => {
+                          alert(`Edit customer: ${customer.name}`)
+                        }}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => {
+                          const printWindow = window.open('', '_blank')
+                          if (printWindow) {
+                            printWindow.document.write(`
+                              <html>
+                                <head><title>Customer Report - ${customer.name}</title></head>
+                                <body style="font-family: Arial, sans-serif; margin: 20px;">
+                                  <h1>Customer Report</h1>
+                                  <p><strong>Name:</strong> ${customer.name}</p>
+                                  <p><strong>Email:</strong> ${customer.email}</p>
+                                  <p><strong>Phone:</strong> ${customer.phone}</p>
+                                  <p><strong>Total Orders:</strong> ${customer.orders}</p>
+                                  <p><strong>Total Spent:</strong> ${customer.totalSpent}</p>
+                                  <p><strong>Generated:</strong> ${new Date().toLocaleDateString()}</p>
+                                </body>
+                              </html>
+                            `)
+                            printWindow.document.close()
+                            printWindow.print()
+                          }
+                        }}
+                      >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </div>
