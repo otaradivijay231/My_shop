@@ -10,8 +10,11 @@ import {
   MoreHorizontal,
   Edit,
   Trash2,
-  Eye
+  Eye,
+  Printer,
+  FileText
 } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 const Sales = () => {
   const salesData = [
@@ -28,6 +31,72 @@ const Sales = () => {
       case "Pending": return "bg-warning/10 text-warning border-warning/20"
       case "Overdue": return "bg-destructive/10 text-destructive border-destructive/20"
       default: return "bg-muted/10 text-muted-foreground border-muted/20"
+    }
+  }
+
+  const printBill = (sale: any, withGST: boolean) => {
+    const gstRate = 0.18 // 18% GST
+    const amount = parseFloat(sale.amount.replace('$', ''))
+    const gst = withGST ? amount * gstRate : 0
+    const total = amount + gst
+
+    const printWindow = window.open('', '_blank')
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Bill - ${sale.id}</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+              .company-name { font-size: 24px; font-weight: bold; color: #333; }
+              .bill-details { margin: 20px 0; }
+              .customer-info { background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+              .amount-section { text-align: right; margin-top: 30px; }
+              .total-line { font-weight: bold; font-size: 18px; border-top: 2px solid #333; padding-top: 10px; margin-top: 10px; }
+              .gst-info { color: #666; font-size: 12px; margin-top: 10px; }
+              .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <div class="company-name">BusinessHub</div>
+              <p>Professional Business Solutions</p>
+            </div>
+            
+            <div class="bill-details">
+              <h2>BILL / INVOICE</h2>
+              <p><strong>Invoice Number:</strong> ${sale.id}</p>
+              <p><strong>Date:</strong> ${sale.date}</p>
+              <p><strong>Bill Type:</strong> ${withGST ? 'With GST (18%)' : 'Without GST'}</p>
+            </div>
+            
+            <div class="customer-info">
+              <h3>Bill To:</h3>
+              <p><strong>${sale.customer}</strong></p>
+              <p>Customer ID: CUST-${Math.floor(Math.random() * 1000)}</p>
+            </div>
+            
+            <div class="amount-section">
+              <p>Amount: ${sale.amount}</p>
+              ${withGST ? `<p>GST (18%): $${gst.toFixed(2)}</p>` : ''}
+              <div class="total-line">
+                Total Amount: $${total.toFixed(2)}
+              </div>
+              <div class="gst-info">
+                ${withGST ? 'This bill includes 18% GST as per government regulations' : 'This bill is generated without GST'}
+              </div>
+            </div>
+            
+            <div class="footer">
+              <p>Thank you for your business!</p>
+              <p>Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+            </div>
+          </body>
+        </html>
+      `)
+      printWindow.document.close()
+      printWindow.print()
     }
   }
 
@@ -113,6 +182,29 @@ const Sales = () => {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <Printer className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-popover border border-border">
+                          <DropdownMenuItem 
+                            onClick={() => printBill(sale, true)}
+                            className="cursor-pointer hover:bg-accent"
+                          >
+                            <FileText className="mr-2 h-4 w-4" />
+                            Print Bill with GST
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => printBill(sale, false)}
+                            className="cursor-pointer hover:bg-accent"
+                          >
+                            <FileText className="mr-2 h-4 w-4" />
+                            Print Bill without GST
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                       <Button 
                         variant="ghost" 
                         size="icon"
