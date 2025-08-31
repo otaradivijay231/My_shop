@@ -63,7 +63,7 @@ const Index = () => {
               Track your business performance and analytics
             </p>
           </div>
-          <Button className="bg-primary hover:bg-primary/90">
+          <Button className="gradient-button">
             <TrendingUp className="mr-2 h-4 w-4" />
             View Full Report
           </Button>

@@ -42,7 +42,7 @@ const Sales = () => {
               Manage your sales records and transactions
             </p>
           </div>
-          <Button className="bg-primary hover:bg-primary/90">
+          <Button className="gradient-button">
             <Plus className="mr-2 h-4 w-4" />
             New Sale
           </Button>

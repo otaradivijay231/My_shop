@@ -67,7 +67,7 @@ const GenerateBill = () => {
               <Save className="mr-2 h-4 w-4" />
               Save Draft
             </Button>
-            <Button className="bg-primary hover:bg-primary/90">
+            <Button className="gradient-button">
               <Send className="mr-2 h-4 w-4" />
               Send Invoice
             </Button>
